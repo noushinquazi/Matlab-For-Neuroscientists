@@ -18,6 +18,9 @@ log1p(a)
 sqrt(a)
 nthroot(a,a)
 
+%% assign multiple variables in one line (generic)
+[r1, c1, v1] = subsref({zeros(3,1), "a", zeros(2,2)}, substruct('{}',{':'}));
+
 %% creating sequences
 % specify increments
 start = 1;
@@ -182,7 +185,7 @@ title("My histogram");
 xlabel("var");
 
 % bar
-figure()
+fig = figure();
 bar_data = [rand(1,3); rand(1,3); rand(1,3)];
 bar(bar_data)
 title("My bar")
@@ -195,3 +198,20 @@ fplot(myfunc, [0 10])
 
 % close all open figures
 %close all;
+% close specific figure
+%close(fig) 
+
+
+%% save and load variables
+% hit "Save workspace" to save all variables
+% select subset of variables and hit "Save as"
+save("varfile") % save all workspace variables to file
+save("varfile2", 'a', 'b') % save specific variables to file
+% load("varfile");
+% load("varfile2", 'a', 'b');
+
+%% write and read 2D matrix to/from file
+mat = [1 2; 3 4];
+writematrix(mat, "matrix_file"); % saves matrix in txt
+mat2 = readmatrix("matrix_file.txt");
+isequal(mat, mat2)

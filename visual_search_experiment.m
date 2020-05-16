@@ -6,14 +6,14 @@ ylim = [0 1];
 fontsize = 20;
 tar_symbol = "O";
 nontar_symbol = "X";
-tar_col = "green";
-nontar_col = "red";
+tar_col = "red";
+nontar_col = "blue";
 
 % instructions
 % plot(xlim, ylim);
 axis = gca;
 axis.Position(3) = 0.5;
-instructions = {['target is {\color{green}',char(tar_symbol), '}'],...
+instructions = {['target is {\color{red}',char(tar_symbol), '}'],...
     'Press ''j'' if you see the target'...
     '''k'' otherwise'};
 annotation('textbox', [0.65, 0.2, 0.1, 0.1], 'interpreter', 'tex','String', instructions);
@@ -26,15 +26,30 @@ num_sizes = 4;
 end_size = 16;
 sizes = linspace(start_size, end_size, num_sizes); %[4, 8, 12, 16]
 
-
 % data containers
-num_trials = 20;
-n_vars = 2; % (response time, indicator for target, indicator for correct trial)
-RESP_TIME = 1;
-TARGET = 2;
-data = zeros(2, num_sizes, num_trials, n_vars); % (2 task types, num_sizes sizes per task, num_trials trials per size, variables)
+num_trials = 10;
+tot_trials = 2 * num_sizes * num_trials;
+n_vars = 4; % (condition, set size, response time, target present)
+COND = 1;
+POPOUT = 2;
+CONJ = 1;
+SETSIZE = 2;
+RESP_TIME = 3;
+TARGET_PRESENT = 4;
+data = zeros(tot_trials, n_vars);
+
+%% wait for user to be ready
+intro_t = text(0.25, 0.5, ["Instructions to the right.", "Click enter to start!"], 'FontSize', 30); 
+pause;
+key = get(fig, 'CurrentKey');
+while ~strcmp(key, 'return')
+    pause;
+    key = get(fig, 'CurrentKey');
+end
+delete(intro_t);
 
 %% iterate over trials for pop-out and conjunction search
+trial_idx = 1;
 for cond=1:2 % cond = 1 is conjunction, cond = 2 is popout
     pop_out = logical(cond - 1); % translate to flag for popout
     for size_idx = 1:num_sizes % iterate over num objects on screen
@@ -98,12 +113,27 @@ for cond=1:2 % cond = 1 is conjunction, cond = 2 is popout
                 %% record response
                 if (key == 'j' && tar_present || key == 'k' && ~tar_present) % correct response
                     num_correct_trials = num_correct_trials + 1;
-                    data(cond, size_idx, num_correct_trials, :) = [t double(tar_present)];
+                    data(trial_idx, COND) = cond;
+                    data(trial_idx, SETSIZE) = num_objs;
+                    data(trial_idx, RESP_TIME) = t;
+                    data(trial_idx, TARGET_PRESENT) = tar_present;
+%                     data(cond, size_idx, num_correct_trials, :) = [t double(tar_present)];
                     fprintf("correct trial # %d\n", num_correct_trials);
+                    trial_idx = trial_idx + 1;
                 else
                     fprintf("incorrect\n");
                 end
-                clf(fig) % clears figure
+                all_t = [tt; tar_t];
+                delete(all_t)
             end
     end
- end
+end
+text(0.25, 0.5, ["You're done!", "Press enter to quit."], 'FontSize', 30); 
+pause;
+key = get(fig, 'CurrentKey');
+while ~strcmp(key, 'return')
+    pause;
+    key = get(fig, 'CurrentKey');
+end
+data = array2table(data, 'VariableNames', {'Condition', 'Set Size', 'Response Time', 'Target Present'});
+close(fig);
