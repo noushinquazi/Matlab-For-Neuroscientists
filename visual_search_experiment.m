@@ -22,13 +22,13 @@ annotation('textbox', [0.65, 0.2, 0.1, 0.1], 'interpreter', 'tex','String', inst
 % number of objects on screen
 % even sizes
 start_size = 4;
-num_sizes = 2;
-end_size = 8;
+num_sizes = 4;
+end_size = 16;
 sizes = linspace(start_size, end_size, num_sizes); %[4, 8, 12, 16]
 
 
 % data containers
-num_trials = 3;
+num_trials = 20;
 n_vars = 2; % (response time, indicator for target, indicator for correct trial)
 RESP_TIME = 1;
 TARGET = 2;
@@ -50,7 +50,7 @@ for cond=1:2 % cond = 1 is conjunction, cond = 2 is popout
 
                 %% set up distractors
                 dis_data = struct;
-                dis_data.pos = rand(num_objs - 1, 2); % randomly pick distractor positions
+                dis_data.pos = rand(num_objs - 1, 2) * 0.7 + 0.1; % randomly pick distractor positions
                 
                 % if conjunctive, ensure exact number of 'X' and 'O'
                 dis_x = randsample(num_objs - 1, num_objs / 2);
