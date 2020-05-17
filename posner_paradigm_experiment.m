@@ -1,9 +1,13 @@
 %%% 4.4 Project
 %% dependencies: allcomb.m from File Exchange
 %% set up experiment conditions
+% don't use the same seed across tries
+rng(sum(100*clock));
+
 % model trials as a tuplet (cue position, valid/invalid, delay1/delay2, reaction time)
-num_pos = 16;
-num_trials = 20; % trials per set of conditions
+num_pos = 16; % number of cue positions
+num_conds = 2; % number of conditions
+num_trials = 20; % trials per combo of conditions
 cues = 1:num_pos;
 valid_cond = [1 0];
 delay_cond = [100 300];
@@ -16,15 +20,40 @@ data = data(randperm(size(data,1)),:);
 
 %% set up screen
 fig = fullfig;
-screen_dims = [0 sqrt(num_pos)];
-screen_grid = allcomb(0:sqrt(num_pos), 0:sqrt(num_pos));
+max_dim = sqrt(num_pos) - 1;
+screen_dims = [0 max_dim + 1];
+screen_grid = allcomb(0:max_dim, 0:max_dim);
 xlim(screen_dims);
 ylim(screen_dims);
-% text(0, 0, "H", 'FontSize', 30);
-% text(4, 0, "H", 'FontSize', 30);
-% text(4, 1, "H", 'FontSize', 30);
 
-for r = 1:size(screen_grid, 1)
-    coord = screen_grid(r,:);
-    text(coord(1), coord(2), "H", 'FontSize', 30);
+%% conduct trials
+%% first showing cue and then target
+%% and collecting response time
+for t_idx = 1:size(data,1)
+    cell_data = num2cell(data(t_idx, 1:1+num_conds)); % get cue + conditions
+    [cue_pos, valid, delay] = cell_data{:};
+    
+    % flash cue for delay ms
+    coords = screen_grid(cue_pos,:);
+    rect = rectangle('Position', [coords 1 1]);
+    pause(delay * 1e-3);
+    cla;
+
+    % display target either at cue or random loc
+    if (valid == 0)
+        new_cue_pos = randsample(cues, 1);
+        while (new_cue_pos == cue_pos)
+            new_cue_pos = randsample(cues, 1);            
+        end
+        cue_pos = new_cue_pos;
+    end
+    coords = screen_grid(cue_pos,:);
+    text(coords(1) + 0.5, coords(2) + 0.5, "X", 'FontSize', 30);
+    
+    % time response
+    tic;
+    pause
+    t = toc;
+    data(t_idx, 1 + num_conds + 1) = t;
+    cla;
 end

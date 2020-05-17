@@ -196,10 +196,16 @@ figure()
 myfunc = @(x)x.^3 % c-style DEFINE
 fplot(myfunc, [0 10])
 
+% clear and reset figure
+%clf
+% clear only data on figure
+%cla
+
 % close all open figures
 %close all;
 % close specific figure
 %close(fig) 
+
 
 
 %% save and load variables
