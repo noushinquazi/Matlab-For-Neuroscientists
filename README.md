@@ -1,6 +1,10 @@
 # Matlab-For-Neuroscientists
 Working through the exercises in the textbook *Matlab for Neuroscientists* in preparation for my REU
 
+## Dependencies
+fullfig.m (File Exchange)
+allcombo.m (File Exchange)
+
 ## Visual Search
 
 Implementing a classic neuroscience visual search study that contrasts the effect of pop-out search vs conjunction search on response time. Typically, response times for pop-out tasks will be constant time because the target should "pop out" almost immediately; for constrast, in conjunction search response times will be linear because distractors can match on shape or color, but a distractor will never match on both features because that will make it indistinguishable from the target!

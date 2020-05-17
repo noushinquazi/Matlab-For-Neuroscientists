@@ -1,6 +1,7 @@
+%%% 3.4 Project
+%% dependencies: fullfig.m from File Exchange
 %% setup figure which will contain visual search objects
-% target is green O when present
-fig = fullfig; % install fullfig.m from matlab file exchange for this to work
+fig = fullfig;
 xlim = [0 1];
 ylim = [0 1];
 fontsize = 20;
@@ -27,7 +28,7 @@ end_size = 16;
 sizes = linspace(start_size, end_size, num_sizes); %[4, 8, 12, 16]
 
 % data containers
-num_trials = 10;
+num_trials = 20;
 tot_trials = 2 * num_sizes * num_trials;
 n_vars = 4; % (condition, set size, response time, target present)
 COND = 1;
