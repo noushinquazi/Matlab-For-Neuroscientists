@@ -11,9 +11,14 @@ num_trials = 20; % trials per combo of conditions
 cues = 1:num_pos;
 valid_cond = [1 0];
 delay_cond = [100 300];
+cue_disp_time = 0.25; % # secs to display cue
 unique_trials = allcomb(cues, valid_cond, delay_cond);
 trials = repelem(unique_trials, num_trials, 1);
 data = [trials zeros(size(trials, 1),1)];
+
+% randomly choose color for cue so subject continues to track cue w/ same
+% level of arousal
+cols = 'ymrgbk';
 
 % shuffle trials
 data = data(randperm(size(data,1)),:);
@@ -35,8 +40,9 @@ for t_idx = 1:size(data,1)
     
     % flash cue for delay ms
     coords = screen_grid(cue_pos,:);
-    rect = rectangle('Position', [coords 1 1]);
-    pause(delay * 1e-3);
+    col = randsample(cols, 1);
+    rect = rectangle('Position', [coords + 0.25 0.5 0.5], 'Curvature',[1,1], 'FaceColor', col);
+    pause(cue_disp_time);
     cla;
 
     % display target either at cue or random loc
@@ -48,6 +54,7 @@ for t_idx = 1:size(data,1)
         cue_pos = new_cue_pos;
     end
     coords = screen_grid(cue_pos,:);
+    pause(1e-3 * delay);
     text(coords(1) + 0.5, coords(2) + 0.5, "X", 'FontSize', 30);
     
     % time response
