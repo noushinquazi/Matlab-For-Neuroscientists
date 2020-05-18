@@ -5,9 +5,9 @@
 rng(sum(100*clock));
 
 % model trials as a tuplet (cue position, valid/invalid, delay1/delay2, reaction time)
-num_pos = 16; % number of cue positions
+num_pos = 4; % number of cue positions
 num_conds = 2; % number of conditions
-num_trials = 20; % trials per combo of conditions
+num_trials = 1; % trials per combo of conditions
 cues = 1:num_pos;
 valid_cond = [1 0];
 delay_cond = [100 300];
@@ -30,6 +30,17 @@ screen_dims = [0 max_dim + 1];
 screen_grid = allcomb(0:max_dim, 0:max_dim);
 xlim(screen_dims);
 ylim(screen_dims);
+
+%% wait for user to be ready
+intro_t = text(ceil(max_dim / 4), ceil(max_dim / 2), ["Instructions: Focus on colored oval.", "Click enter when 'X' appears", "Click enter to start!"], 'FontSize', 30); 
+pause;
+key = get(fig, 'CurrentKey');
+while ~strcmp(key, 'return')
+    pause;
+    key = get(fig, 'CurrentKey');
+end
+delete(intro_t);
+
 
 %% conduct trials
 %% first showing cue and then target
@@ -60,7 +71,21 @@ for t_idx = 1:size(data,1)
     % time response
     tic;
     pause
+    key = get(fig, 'CurrentKey');
+    while ~strcmp(key, 'return')
+        pause;
+        key = get(fig, 'CurrentKey');
+    end
     t = toc;
     data(t_idx, 1 + num_conds + 1) = t;
     cla;
 end
+text(ceil(max_dim / 4), ceil(max_dim / 2), ["You're done!", "Press enter to quit."], 'FontSize', 30); 
+pause;
+key = get(fig, 'CurrentKey');
+while ~strcmp(key, 'return')
+    pause;
+    key = get(fig, 'CurrentKey');
+end
+data = array2table(data, 'VariableNames', {'Cue Position', 'Valid', 'Delay', 'Response Time'});
+close(fig);
