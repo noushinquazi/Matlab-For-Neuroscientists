@@ -85,3 +85,35 @@ title(["Response times as a function", " of task difficulty (target not present)
 xlabel("Set size");
 ylabel("Response time (s)");
 legend(["pop-out" "conjunction"]);
+
+%% statistical significance tests
+% test for difference between target present and target not present
+% conditions
+A = data.('Response Time')(data.('Target Present') == 1);
+B = data.('Response Time')(data.('Target Present') == 0);
+[sig, p] = ttest2(A, B);
+if (p <= 0.05)
+    fprintf("Target present is a significant condition");
+end
+
+% test for difference between popout and conjunction conditions
+A = data.('Response Time')(data.('Condition') == 1);
+B = data.('Response Time')(data.('Condition') == 2);
+[sig, p] = ttest2(A, B);
+if (p <= 0.05)
+    fprintf("Search condition is a significant condition. P-value %d\n", p);
+end
+
+% test for difference between set sizes in popout conditions
+A = data(data.('Condition') == 2, :);
+[p,tbl,stats] = anova1(A.('Response Time'), A.('Set Size'));
+if (p <= 0.05)
+    fprintf("Set size is a signficant condition for popout search\n");
+end
+
+% test for difference between set sizes in conjunction conditions
+A = data(data.('Condition') == 1, :);
+[p,tbl,stats] = anova1(A.('Response Time'), A.('Set Size'));
+if (p <= 0.05)
+    fprintf("Set size is a signficant condition for conjunction search\n");
+end
