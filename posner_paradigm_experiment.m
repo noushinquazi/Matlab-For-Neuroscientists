@@ -5,9 +5,9 @@
 rng(sum(100*clock));
 
 % model trials as a tuplet (cue position, valid/invalid, delay1/delay2, reaction time)
-num_pos = 4; % number of cue positions
+num_pos = 9; % number of cue positions
 num_conds = 2; % number of conditions
-num_trials = 1; % trials per combo of conditions
+num_trials = 10; % trials per combo of conditions
 cues = 1:num_pos;
 valid_cond = [1 0];
 delay_cond = [100 300];
